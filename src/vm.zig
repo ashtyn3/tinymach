@@ -1,7 +1,20 @@
 const std = @import("std");
 const memory = @import("memory.zig");
+const ops = @import("instructions.zig");
 
 const PAGE_SIZE = 65536;
+
+const WrapData = union {
+    u8: u8,
+    u16: u16,
+    u32: u32,
+    u64: u64,
+};
+
+const Wrap = struct {
+    data: WrapData,
+    unwrap_type: ops.instructions,
+};
 pub const VM = struct {
     const Self = @This();
 
@@ -37,6 +50,7 @@ pub const VM = struct {
 
     pub fn pop_u16(self: *Self) u16 {
         var buffer = [_]u8{ self.stack_items.ptr[self.stack_ptr() - 1], self.stack_items.ptr[self.stack_ptr()] };
+        self.stack_pointer -= 2;
         return std.mem.readIntSlice(u16, &buffer, std.builtin.Endian.Little);
     }
 
@@ -54,6 +68,7 @@ pub const VM = struct {
 
     pub fn pop_u32(self: *Self) u32 {
         var buffer = [_]u8{ self.stack_items.ptr[self.stack_ptr() - 3], self.stack_items.ptr[self.stack_ptr() - 2], self.stack_items.ptr[self.stack_ptr() - 1], self.stack_items.ptr[self.stack_ptr()] };
+        self.stack_pointer -= 4;
         return std.mem.readIntSlice(u32, &buffer, std.builtin.Endian.Little);
     }
 
@@ -84,11 +99,95 @@ pub const VM = struct {
             self.stack_items.ptr[self.stack_ptr() - 1],
             self.stack_items.ptr[self.stack_ptr()],
         };
+        self.stack_pointer -= 8;
         return std.mem.readIntSlice(u64, &buffer, std.builtin.Endian.Little);
     }
     pub fn destroy(self: *Self) void {
         self.mem.destroyProg();
         _ = self.stack_alloc.deinit();
+    }
+
+    fn wrap(self: *Self, t: ops.instructions) !Wrap {
+        var wrapper: Wrap = undefined;
+        switch (t) {
+            .T_u8 => {
+                wrapper.data = WrapData{ .u8 = self.mem.u8_() };
+                wrapper.unwrap_type = ops.instructions.T_u8;
+                return wrapper;
+            },
+            .T_u16 => {
+                wrapper.data = WrapData{ .u16 = try self.mem.u16_() };
+                wrapper.unwrap_type = ops.instructions.T_u16;
+                return wrapper;
+            },
+            .T_u32 => {
+                wrapper.data = WrapData{ .u32 = try self.mem.u32_() };
+                wrapper.unwrap_type = ops.instructions.T_u32;
+                return wrapper;
+            },
+            .T_u64 => {
+                wrapper.data = WrapData{ .u64 = try self.mem.u64_() };
+                wrapper.unwrap_type = ops.instructions.T_u64;
+                return wrapper;
+            },
+            else => return wrapper,
+        }
+    }
+
+    fn wrap_push(self: *Self, w: Wrap) !void {
+        switch (w.unwrap_type) {
+            ops.instructions.T_u8 => self.push_u8(w.data.u8),
+            ops.instructions.T_u16 => try self.push_u16(w.data.u16),
+            ops.instructions.T_u32 => try self.push_u32(w.data.u32),
+            ops.instructions.T_u64 => try self.push_u64(w.data.u64),
+            else => std.log.err("Bad type", .{}),
+        }
+    }
+
+    fn wrap_pop(self: *Self) !Wrap {
+        var w: Wrap = undefined;
+        switch (w.unwrap_type) {
+            ops.instructions.T_u8 => {
+                w.data.u8 = self.pop_u8();
+                w.unwrap_type = ops.instructions.T_u8;
+            },
+            ops.instructions.T_u16 => {
+                w.data.u16 = try self.pop_u16();
+                w.unwrap_type = ops.instructions.T_u16;
+            },
+            ops.instructions.T_u32 => {
+                w.data.u32 = try self.pop_u32();
+                w.unwrap_type = ops.instructions.T_u32;
+            },
+            ops.instructions.T_u64 => {
+                w.data.u64 = try self.pop_u64();
+                w.unwrap_type = ops.instructions.T_u64;
+            },
+        }
+
+        return w;
+    }
+
+    pub fn exec(self: *Self) !void {
+        var nop = false;
+        while (nop == false) {
+            var op = @intToEnum(ops.instructions, self.mem.u8_());
+            _ = switch (op) {
+                .INS_push => {
+                    const t = self.mem.u8_();
+                    const w_arg = try self.wrap(@intToEnum(ops.instructions, t));
+                    try self.wrap_push(w_arg);
+                    continue;
+                },
+                .nop => {
+                    nop = true;
+                    continue;
+                },
+                else => {
+                    continue;
+                },
+            };
+        }
     }
 };
 
