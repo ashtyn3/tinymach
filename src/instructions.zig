@@ -1,15 +1,19 @@
 pub const instructions = enum(u8) {
     nop,
+    stack_trace,
 
     // STACK OPS
     INS_push,
+    INS_dup,
     INS_pop,
 
     // MATH OPS
     INS_add,
     INS_sub,
     INS_mul,
+};
 
+pub const types = enum(u8) {
     //TYPE OPS
     // float
     T_f64,
