@@ -8,10 +8,10 @@ pub const Registers = struct {
     // register_alloc: std.mem.Allocator,
     registers: [8]mem.Wrap,
 
-    pub fn set(self: *Self, idx: regs, dat: i64) void {
+    pub fn set(self: *Self, idx: regs, dat: mem.Wrap) void {
         self.registers[@intCast(usize, @enumToInt(idx))] = dat;
     }
-    pub fn get(self: *Self, idx: regs) i64 {
+    pub fn get(self: *Self, idx: regs) mem.Wrap {
         return self.registers[@intCast(usize, @enumToInt(idx))];
     }
 };
