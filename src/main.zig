@@ -2,6 +2,7 @@ const std = @import("std");
 const vm = @import("vm.zig");
 const mem = @import("memory.zig");
 const i = @import("instructions.zig");
+const utils = @import("utils/utils.zig");
 const inst = i.instructions;
 const types = i.types;
 

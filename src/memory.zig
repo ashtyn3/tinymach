@@ -2,6 +2,7 @@ const std = @import("std");
 const vm = @import("vm.zig");
 const ops = @import("instructions.zig");
 const registers = @import("registers.zig");
+const utils = @import("utils/utils.zig");
 
 pub const WrapData = union(ops.types) {
     T_u8: u8,
@@ -21,19 +22,6 @@ pub const Wrap = struct {
     data: WrapData,
     unwrap_type: ops.types,
 };
-
-pub fn intBuffer(comptime T: type, dat: T) ![]u8 {
-    const allocator = std.heap.page_allocator;
-    const size = @typeInfo(T).Int.bits / 8;
-    var buffer = try allocator.alloc(u8, size);
-    std.mem.writeIntSliceLittle(T, buffer, dat);
-
-    return buffer;
-}
-
-pub fn bufferInt(comptime T: type, dat: []u8) !T {
-    return std.mem.readIntSlice(T, dat, std.builtin.Endian.Little);
-}
 
 pub const memory = struct {
     const Self = @This();
@@ -64,7 +52,7 @@ pub const memory = struct {
 
         var ip = @intCast(usize, origin_ip);
 
-        var int = try bufferInt(u16, &[_]u8{ self.prog.items[ip], self.prog.items[ip + 1] });
+        var int = try utils.bufferInt(u16, &[_]u8{ self.prog.items[ip], self.prog.items[ip + 1] });
         return int;
     }
 
@@ -74,7 +62,7 @@ pub const memory = struct {
 
         var ip = @intCast(usize, origin_ip);
 
-        var int = try bufferInt(u32, &[_]u8{
+        var int = try utils.bufferInt(u32, &[_]u8{
             self.prog.items[ip],
             self.prog.items[ip + 1],
             self.prog.items[ip + 2],
@@ -88,7 +76,7 @@ pub const memory = struct {
 
         var ip = @intCast(usize, origin_ip);
 
-        var int = try bufferInt(u64, &[_]u8{
+        var int = try utils.bufferInt(u64, &[_]u8{
             self.prog.items[ip],
             self.prog.items[ip + 1],
             self.prog.items[ip + 2],
