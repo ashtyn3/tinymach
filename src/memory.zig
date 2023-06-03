@@ -103,8 +103,8 @@ pub const memory = struct {
 };
 
 pub fn memory_init(allocator: std.mem.Allocator) memory {
-    var regs_str = registers{
-        .registers = [8]i64{ 0, 0, 0, 0, 0, 0, 0, 0 },
+    var regs_str = registers.Registers{
+        .registers = undefined,
     };
 
     var init = memory{
