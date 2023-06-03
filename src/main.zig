@@ -14,11 +14,11 @@ pub fn main() !void {
     try vm_inst.mem.load(&prog);
     try vm_inst.mem.prog.append(@enumToInt(inst.INS_push));
     try vm_inst.mem.prog.append(@enumToInt(types.T_u16));
-    try vm_inst.mem.prog.appendSlice(try mem.intBuffer(u16, 20));
+    try vm_inst.mem.prog.appendSlice(try utils.intBuffer(u16, 20));
 
     try vm_inst.mem.prog.append(@enumToInt(inst.INS_push));
     try vm_inst.mem.prog.append(@enumToInt(types.T_u32));
-    try vm_inst.mem.prog.appendSlice(try mem.intBuffer(u32, 20_000));
+    try vm_inst.mem.prog.appendSlice(try utils.intBuffer(u32, 20_000));
 
     try vm_inst.mem.prog.append(@enumToInt(inst.stack_trace));
     try vm_inst.mem.prog.append(@enumToInt(inst.INS_dup));
