@@ -9,7 +9,7 @@ const types = i.types;
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
 pub fn main() !void {
-    var vm_inst = vm.VM_init(gpa.allocator());
+    var vm_inst = try vm.VM_init(gpa.allocator());
     var prog = [_]u8{};
     try vm_inst.mem.load(&prog);
     try vm_inst.mem.prog.append(@enumToInt(inst.INS_push));
