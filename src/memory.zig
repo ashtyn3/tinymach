@@ -72,7 +72,8 @@ pub const memory = struct {
     }
     pub fn u64_(self: *Self) !u64 {
         var origin_ip = self.registers.get(registers.regs.ip).data.T_u64;
-        self.registers.set(registers.regs.ip, utils.wrap(ops.types.T_u64, u64, origin_ip + 8));
+        var new_ip = self.registers.get(registers.regs.ip).data.T_u64 + 8;
+        self.registers.set(registers.regs.ip, new_ip);
 
         var ip = @intCast(usize, origin_ip);
 
