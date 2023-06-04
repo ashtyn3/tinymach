@@ -94,12 +94,12 @@ pub const memory = struct {
     }
 };
 
-pub fn memory_init(allocator: std.mem.Allocator) memory {
-    var regs_str = registers.register_init();
+pub fn memory_init(allocator: std.mem.Allocator) !memory {
+    var regs_struct = try registers.register_init();
     var init = memory{
         .allocator = allocator,
         .prog = std.ArrayList(u8).init(allocator),
-        .registers = regs_str,
+        .registers = regs_struct,
     };
     return init;
 }

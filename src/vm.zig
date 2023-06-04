@@ -95,10 +95,10 @@ pub const VM = struct {
     }
 };
 
-pub fn VM_init(allocator: std.mem.Allocator) VM {
+pub fn VM_init(allocator: std.mem.Allocator) !VM {
     var init = VM{
         .stack = std.ArrayList(memory.Wrap).init(allocator),
-        .mem = memory.memory_init(allocator),
+        .mem = try memory.memory_init(allocator),
     };
 
     return init;
