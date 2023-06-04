@@ -31,3 +31,5 @@ pub const types = enum(u8) {
     T_u16,
     T_u8,
 };
+
+pub const vmErrors = error{badData};
