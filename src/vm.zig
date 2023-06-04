@@ -30,7 +30,7 @@ pub const VM = struct {
         var wrapper: memory.Wrap = undefined;
         switch (t) {
             .T_u8 => {
-                wrapper.data = memory.WrapData{ .T_u8 = self.mem.u8_() };
+                wrapper.data = memory.WrapData{ .T_u8 = try self.mem.u8_() };
                 wrapper.unwrap_type = ops.types.T_u8;
                 return wrapper;
             },
@@ -58,10 +58,10 @@ pub const VM = struct {
         var last_inst: ops.instructions = undefined;
         _ = last_inst;
         while (nop == false) {
-            var op = @intToEnum(ops.instructions, self.mem.u8_());
+            var op = @intToEnum(ops.instructions, try self.mem.u8_());
             _ = switch (op) {
                 .INS_push => {
-                    const t = self.mem.u8_();
+                    const t = try self.mem.u8_();
                     const w_arg = try self.wrap(@intToEnum(ops.types, t));
                     try self.push(w_arg);
                     continue;

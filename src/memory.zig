@@ -37,7 +37,7 @@ pub const memory = struct {
     pub fn destroyProg(self: *Self) void {
         self.prog.deinit();
     }
-    pub fn u8_(self: *Self) u8 {
+    pub fn u8_(self: *Self) !u8 {
         var origin_ip = self.registers.get(registers.regs.ip).data.T_u64;
         var new_ip = self.registers.get(registers.regs.ip).data.T_u64 + 1;
         self.registers.set(registers.regs.ip, try utils.wrap(ops.types.T_u64, u64, new_ip));
