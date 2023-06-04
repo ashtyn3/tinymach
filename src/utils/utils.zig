@@ -19,7 +19,6 @@ pub fn wrap(comptime e_T: ops.types, comptime T: type, dat: T) ops.vmErrors!mem.
     var wrapper: mem.Wrap = undefined;
     wrapper.unwrap_type = e_T;
 
-    std.debug.print("{}", .{e_T});
     switch (e_T) {
         .T_u8 => wrapper.data = mem.WrapData{ .T_u8 = dat },
         .T_u16 => wrapper.data = mem.WrapData{ .T_u16 = dat },

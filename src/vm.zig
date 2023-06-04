@@ -80,7 +80,7 @@ pub const VM = struct {
                     for (self.stack.items) |f, i| {
                         const item: memory.Wrap = f;
 
-                        std.debug.print("{}: {}\n", .{ i, item });
+                        std.debug.print("{}: {}\n", .{ i, item.data });
                     }
                 },
                 .nop => {
