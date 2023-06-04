@@ -95,10 +95,7 @@ pub const memory = struct {
 };
 
 pub fn memory_init(allocator: std.mem.Allocator) memory {
-    var regs_str = registers.Registers{
-        .registers = undefined,
-    };
-
+    var regs_str = registers.register_init();
     var init = memory{
         .allocator = allocator,
         .prog = std.ArrayList(u8).init(allocator),

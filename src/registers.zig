@@ -10,9 +10,6 @@ pub const Registers = struct {
     // register_alloc: std.mem.Allocator,
     registers: [8]mem.Wrap,
 
-    pub fn init(self: *Self) void {
-        self.registers[0] = utils.wrap(ops.types.T_u64, u64, 0);
-    }
     pub fn set(self: *Self, idx: regs, dat: mem.Wrap) void {
         self.registers[@intCast(usize, @enumToInt(idx))] = dat;
     }
@@ -20,3 +17,10 @@ pub const Registers = struct {
         return self.registers[@intCast(usize, @enumToInt(idx))];
     }
 };
+
+pub fn register_init() !Registers {
+    var r: Registers = undefined;
+    r.registers[0] = try utils.wrap(ops.types.T_u64, u64, 0);
+
+    return r;
+}
