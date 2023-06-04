@@ -40,7 +40,7 @@ pub const memory = struct {
     pub fn u8_(self: *Self) u8 {
         var origin_ip = self.registers.get(registers.regs.ip).data.T_u64;
         var new_ip = self.registers.get(registers.regs.ip).data.T_u64 + 1;
-        self.registers.set(registers.regs.ip, utils.wrap(ops.types.T_u64, u64, new_ip));
+        self.registers.set(registers.regs.ip, try utils.wrap(ops.types.T_u64, u64, new_ip));
 
         var ip = @intCast(usize, origin_ip);
 
@@ -50,7 +50,7 @@ pub const memory = struct {
     pub fn u16_(self: *Self) !u16 {
         var origin_ip = self.registers.get(registers.regs.ip).data.T_u64;
         var new_ip = self.registers.get(registers.regs.ip).data.T_u64 + 2;
-        self.registers.set(registers.regs.ip, utils.wrap(ops.types.T_u64, u64, new_ip));
+        self.registers.set(registers.regs.ip, try utils.wrap(ops.types.T_u64, u64, new_ip));
 
         var ip = @intCast(usize, origin_ip);
 
@@ -61,7 +61,7 @@ pub const memory = struct {
     pub fn u32_(self: *Self) !u32 {
         var origin_ip = self.registers.get(registers.regs.ip).data.T_u64;
         var new_ip = self.registers.get(registers.regs.ip).data.T_u64 + 4;
-        self.registers.set(registers.regs.ip, utils.wrap(ops.types.T_u64, u64, new_ip));
+        self.registers.set(registers.regs.ip, try utils.wrap(ops.types.T_u64, u64, new_ip));
 
         var ip = @intCast(usize, origin_ip);
 
@@ -76,7 +76,7 @@ pub const memory = struct {
     pub fn u64_(self: *Self) !u64 {
         var origin_ip = self.registers.get(registers.regs.ip).data.T_u64;
         var new_ip = self.registers.get(registers.regs.ip).data.T_u64 + 8;
-        self.registers.set(registers.regs.ip, new_ip);
+        self.registers.set(registers.regs.ip, try utils.wrap(ops.types.T_u64, u64, new_ip));
 
         var ip = @intCast(usize, origin_ip);
 
